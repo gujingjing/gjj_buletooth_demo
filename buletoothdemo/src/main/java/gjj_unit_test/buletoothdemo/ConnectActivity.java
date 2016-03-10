@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -239,10 +240,14 @@ public class ConnectActivity extends AppCompatActivity {
                                 mGattCharacteristics.get(groupPosition).get(childPosition);
                         final int charaProp = characteristic.getProperties();//获取文件属性
                         Log.e("文件属性===PROPERTY_READ",(charaProp | BluetoothGattCharacteristic.PROPERTY_READ)+"");
+
+
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {//Characteristic property: Characteristic is readable.
                             // If there is an active notification on a characteristic, clear
                             // it first so it doesn't update the data field on the user interface.
                             if (mNotifyCharacteristic != null) {
+                                //第一个参数:哪个特点用来通知
+                                //第二个参数:设置为true来启用通知/迹象
                                 mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, false);
                                 mNotifyCharacteristic = null;
                             }
@@ -254,8 +259,31 @@ public class ConnectActivity extends AppCompatActivity {
                             mNotifyCharacteristic = characteristic;
                             mBluetoothLeService.setCharacteristicNotification(characteristic, true);
                         }
+
+                        // TODO 待检测的，实验代码
+                        //UUID_KEY_DATA是可以跟蓝牙模块串口通信的Characteristic
+                        if(characteristic.getUuid().toString().equals(SampleGattAttributes.UUID_KEY_DATA)){
+
+                            //接受Characteristic被写的通知,收到蓝牙模块的数据后会触发mOnDataAvailable.onCharacteristicWrite()
+                            mBluetoothLeService.setCharacteristicNotification(characteristic, true);
+                            //设置数据内容
+                            characteristic.setValue("send data->");
+                            //往蓝牙模块写入数据
+                            mBluetoothLeService.writeCharacteristic(characteristic);
+
+                            //测试读取当前Characteristic数据，会触发mOnDataAvailable.onCharacteristicRead()
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.e("开始读取","开始读取");
+                                    mBluetoothLeService.readCharacteristic(characteristic);//开始读取
+                                }
+                            }, 500);
+
+                        }
                         return true;
                     }
+
                     return false;
                 }
             };

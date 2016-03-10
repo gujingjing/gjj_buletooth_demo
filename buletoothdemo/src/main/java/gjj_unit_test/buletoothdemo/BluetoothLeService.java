@@ -111,10 +111,22 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,int status) {
 
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.e(TAG, "读写特性===");
+                Log.e(TAG, "读取特性===");
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
             }else{
-                Log.e(TAG, "读写失败==="+status);
+                Log.e(TAG, "读取失败==="+status);
+            }
+        }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicWrite(gatt, characteristic, status);
+            // TODO 这里面还不是很了解
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.e(TAG, "写入特性===");
+                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            }else{
+                Log.e(TAG, "写入失败==="+status);
             }
         }
 
@@ -297,6 +309,13 @@ public class BluetoothLeService extends Service {
             return;
         }
         mBluetoothGatt.readCharacteristic(characteristic);
+    }
+    public void writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized==写入失败");
+            return;
+        }
+        mBluetoothGatt.writeCharacteristic(characteristic);
     }
 
     /**

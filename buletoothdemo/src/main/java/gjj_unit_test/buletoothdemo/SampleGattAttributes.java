@@ -29,13 +29,15 @@ public class SampleGattAttributes {
     //测试的数据
     public static String TEST_SERVICES = "00002902-0000-1000-8000-00805f9b34fc";
     public static String TEST_CHARACTERISTICS = "00002902-0000-1000-8000-00805f9b34se";
+    public static String UUID_KEY_DATA = "00001801-0000-1000-8000-00805f9b34fb";
+
     static {
         // Sample Services.
         attributes.put("0000180d-0000-1000-8000-00805f9b34fb", "Heart Rate Service");
         attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information Service");
-        attributes.put("00001801-0000-1000-8000-00805f9b34fb", "Device test Service");//测试用的
 
         attributes.put(TEST_SERVICES,"测试的服务");
+        attributes.put(UUID_KEY_DATA,"测试的服务");
         // Sample Characteristics.
         attributes.put(HEART_RATE_MEASUREMENT, "Heart Rate Measurement");
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name String");
